@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  2667_단지번호붙이기
+//  2667_단지번호붙이기
 //
 //  Created by Kim Seong Jin on 30/10/2019.
 //  Copyright © 2019 Kim's Inc. All rights reserved.
@@ -13,7 +13,7 @@
 using namespace std;
 int n;
 vector<vector<int>>adj;
-
+//check
 void bfs(int y, int x, int& cnt){
     adj[y][x] = 0;
     cnt++;
