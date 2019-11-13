@@ -110,49 +110,49 @@ for(int i = 0 ; i<start.size() ; i++){
  #### Code
  ```cpp
 int compare(){
- //seperate team
- vector<int> start, link;
- int scoreA, scoreB;
- 
- scoreA = scoreB = 0;
- 
- for(int i = 0 ; i < n ; i++){
-     if(selected[i])
-         start.push_back(i);
-     else
-         link.push_back(i);
- }
- for(int i = 0 ; i<start.size() ; i++){
-     int sy, sx, ly, lx;
-     for(int j = i+1 ; j<start.size() ; j++){
-         sy = start[i]; sx = start[j]; 
-         ly = link[i]; lx = link[j];
-         
-         scoreA += table[sy][sx] + table[sx][sy];
-         scoreB += table[ly][lx] + table[lx][ly];
+     //seperate team
+     vector<int> start, link;
+     int scoreA, scoreB;
+     
+     scoreA = scoreB = 0;
+     
+     for(int i = 0 ; i < n ; i++){
+         if(selected[i])
+             start.push_back(i);
+         else
+             link.push_back(i);
      }
- }
+     for(int i = 0 ; i<start.size() ; i++){
+         int sy, sx, ly, lx;
+         for(int j = i+1 ; j<start.size() ; j++){
+             sy = start[i]; sx = start[j]; 
+             ly = link[i]; lx = link[j];
+             
+             scoreA += table[sy][sx] + table[sx][sy];
+             scoreB += table[ly][lx] + table[lx][ly];
+         }
+     }
 
- return abs(scoreA-scoreB);
+     return abs(scoreA-scoreB);
 }
 
 
 void dfs(int here, int cnt){
- if(cnt == n/2){
-     int diff = compare();
-     ret = min(ret, diff);
-     return;
- }
- 
- for(int i = here; i< n ;i++){
-     if(!selected[i]){
-         selected[i]=true;
-         
-         dfs(i, cnt+1);
-         selected[i]=false;
-         
+     if(cnt == n/2){
+         int diff = compare();
+         ret = min(ret, diff);
+         return;
      }
- }
+     
+     for(int i = here; i< n ;i++){
+         if(!selected[i]){
+             selected[i]=true;
+             
+             dfs(i, cnt+1);
+             selected[i]=false;
+             
+         }
+     }
 }
 
 ```
