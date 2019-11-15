@@ -82,25 +82,25 @@ void dfs(int here, int cnt){
 ```
 2. 조합 생성후 선택된 인자와 그렇지 않은 인자들을 Start와 Link팀으로 나눈다
   ```cpp
-for(int i = 0 ; i < n ; i++){
-  if(selected[i])
-      start.push_back(i);
-  else
-      link.push_back(i);
+for(int i = 0 ; i < n ; i++){  
+     if(selected[i])
+         start.push_back(i);
+     else
+         link.push_back(i);
 }
   ```
 3. start 팀과 link 팀의 능력치를 모두 합산 한다
   ```cpp
 for(int i = 0 ; i<start.size() ; i++){
-  int sy, sx, ly, lx;
-  for(int j = i+1 ; j<start.size() ; j++){
-      sy = start[i]; sx = start[j]; //start member
-      ly = link[i]; lx = link[j];   //link member
+    int sy, sx, ly, lx;
+    for(int j = i+1 ; j<start.size() ; j++){
+        sy = start[i]; sx = start[j]; //start member
+        ly = link[i]; lx = link[j];   //link member
       
-      //add stat of member
-      scoreA += table[sy][sx] + table[sx][sy];
-      scoreB += table[ly][lx] + table[lx][ly];
-  }
+        //add stat of member
+        scoreA += table[sy][sx] + table[sx][sy];
+        scoreB += table[ly][lx] + table[lx][ly];
+    }
 
 }
   ```
