@@ -50,12 +50,14 @@ void solve(){
 
 6. 반례
 ```
-|   R   |   G   |   B   |
-| 1000  |  999  |  999  |
-|  999  | 1000  |  1000 |
-|   1   | 1001  | 1001  |
+|R|G|B|
+|------|----|----|
+|1001|999|999|
+|999|1000|1000|
+|1|1001|1001|
+
 ```
-Row 마다 최소값을 찾아나가면 G -> R -> G  (999 + 999 + 1001 = 2999) 
+Row 마다 최소값을 찾아나가면 G -> R -> G  (999 + 999 + 1001 = 2999)  
 하지만 더 작은 경우가 존재 함  G -> B -> R   (999 + 1000 + 1 = 2001)  
 
 어떤 방식으로 문제를 해결할 코드를 작성해야 할지 몰라 실패로 끝남 
@@ -91,57 +93,34 @@ dp[n][2] = min(dp[n-1][0], dp[n-1][1]) + cost[n][2];
  
  #### Code
  ```cpp
-int compare(){
-     //seperate team
-     vector<int> start, link;
-     int scoreA, scoreB;
-     
-     scoreA = scoreB = 0;
-     
-     for(int i = 0 ; i < n ; i++){
-         if(selected[i])
-             start.push_back(i);
-         else
-             link.push_back(i);
-     }
-     for(int i = 0 ; i<start.size() ; i++){
-         int sy, sx, ly, lx;
-         for(int j = i+1 ; j<start.size() ; j++){
-             sy = start[i]; sx = start[j]; 
-             ly = link[i]; lx = link[j];
-             
-             scoreA += table[sy][sx] + table[sx][sy];
-             scoreB += table[ly][lx] + table[lx][ly];
-         }
-     }
+void solve(){
+    int ret;
+    
+    for(int i = 0 ; i < 3 ; i++)
+        dp[0][i] = cost[0][i];
+    
+    for(int i = 1 ; i< n ; i++){
+        dp[i][0] = min(dp[i-1][1], dp[i-1][2]) + cost[i][0];
+        dp[i][1] = min(dp[i-1][0], dp[i-1][2]) + cost[i][1];
+        dp[i][2] = min(dp[i-1][0], dp[i-1][1]) + cost[i][2];
+    }
 
-     return abs(scoreA-scoreB);
-}
-
-
-void dfs(int here, int cnt){
-     if(cnt == n/2){
-         int diff = compare();
-         ret = min(ret, diff);
-         return;
-     }
-     
-     for(int i = here; i< n ;i++){
-         if(!selected[i]){
-             selected[i]=true;
-             
-             dfs(i, cnt+1);
-             selected[i]=false;
-             
-         }
-     }
+    ret = min(dp[n-1][0], min(dp[n-1][1], dp[n-1][2]));
+    cout<<ret<<endl;
+    
 }
 
 ```
 
 
 ### 전략 BUILD
-1. 가능한 멤버 경우의 수를 조합 탐색 과정을 통해 만들어 낼 수 있었다
-2. 선택된 인자와 그렇지 않은 인자를 구분할 수 있는 좋은 문제였다
-3. 적절히 무엇을 나누어~ 의 뉘앙스의 문제가 나오면 조합과 이분을 생각해보자.
+1.  row, col 별로  최소값을 구하여 저장 할 수 있다
+2. 수없이 많은 분기를 도표로 해결 할 수 있는 문제 였다.
+3. 각 경우 별로 모든 경우의 수를 계산 하는 경우에는 2차원 Array를 사용해보자.
+
+[문제링크](https://www.acmicpc.net/problem/1149).
+
+### 연관문제
+1. [123 더하기 5](https://www.acmicpc.net/problem/15990).
+2. [쉬운계단수](https://www.acmicpc.net/problem/10844).
 
