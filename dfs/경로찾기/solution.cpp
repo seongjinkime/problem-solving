@@ -33,7 +33,7 @@ void markLinks(int n){
                 dfs(i, j);
             }
         }
-        
+
     }
 }
 

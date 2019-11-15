@@ -10,7 +10,7 @@
 #include <vector>
 using namespace std;
 
-vector<vector<int>>table;
+vector<vector< int>> table;
 int w, h;
 void bfs(int y, int x){
     table[y][x] = 0;
@@ -33,7 +33,7 @@ void bfs(int y, int x){
 }
 
 void build(int w, int h){
-    table = vector<vector<int>>(h, vector<int>(w));
+    table = vector<vector<int > >(h, vector<int>(w));
     for(int y = 0 ; y < h ; y++){
         for(int x = 0 ; x < w ; x++){
             cin>>table[y][x];
@@ -57,7 +57,7 @@ void solution(int w, int h){
 }
 
 
-int main(int argc, const char * argv[]) {
+int main(){
     while(true){
         cin>>w>>h;
         if(w==0 && h==0)break;

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-vector<vector<int>> picA, picB;
+vector<vector<int > > picA, picB;
 int n;
 
 void dfs(vector<vector<int>>& table, int num, int y, int x){
