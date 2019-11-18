@@ -15,7 +15,6 @@
  a) 2 X 1   
  b) 1 X 2  
  c) 2 X 2  
- ...
 ```
 2.  n을 1씩 증가시키며 그림을 그려본다
 ![Tree](https://github.com/seongjinkime/problem-solving/blob/master/images/11727_tree.png)
