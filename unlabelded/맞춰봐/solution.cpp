@@ -1,11 +1,3 @@
-//
-//  main.cpp
-//  1248_맞춰봐
-//
-//  Created by Kim Seong Jin on 26/11/2019.
-//  Copyright © 2019 Kim Seong Jin. All rights reserved.
-//
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -13,96 +5,69 @@
 #define MAX 11
 
 using namespace std;
+vector<vector<char>> op;
 vector<bool> selected;
 vector<int> nums;
 vector<int>permutation;
 int n;
-long long cnt;
-string op;
 
-bool pass(int idx, int num){
-    //cout<<idx<<" : "<<num<<endl;
-    if(op[idx] == '-'){
-        return num < 0;
-    }else if(op[idx] == '+'){
-        return num > 0;
-    }else if (op[idx] == '0'){
-        return num == 0;
-    }
-    return false;
-}
 
-bool isAns(){
-    int idx = 0;
-    for(int i = 0 ; i < n ; i++){
-        int sum = permutation[i];
-        //cout<<sum<<" ";
-        if(!pass(idx, sum)){
+bool qualified(int col){
+    int sum = 0;
+    int idx = col;
+    for(int row = col ; row >= 0 ; row--){
+        sum += permutation[idx];
+        if(op[row][col] == '+' && sum <= 0)
             return false;
-        }
-        idx++;
-        for(int j = i+1 ; j < n ; j++){
-            sum += permutation[j];
-            //cout<<sum<<" ";
-            
-            if(!pass(idx, sum)){
-                return false;
-            }
-            //cout<<op[idx]<<" ";
-            idx++;
-        }
-        //cout<<endl;
+        if(op[row][col] == '-' && sum >= 0)
+            return false;
+        if(op[row][col] == '0' && sum != 0)
+            return false;
+        idx--;
     }
     return true;
 }
 
 void perm(int cnt){
-    if(cnt==n){
-        cnt++;
-        if(isAns()){
-            for(int i = 0 ; i < permutation.size() ; i++){
-                printf("%d ", permutation[i]);
-            }
-            cout<<endl;
-            exit(0);
+    if(cnt == n){
+        for(int i = 0 ; i < permutation.size() ; i++){
+            cout<<permutation[i]<<" ";
         }
+        exit(0);
         
-        return;
     }
-    
-    for(int i = 0; i < nums.size() ; i ++){
-        if(!selected[i]){
-            selected[i] = true;
-            permutation.push_back(nums[i]);
+    for(int i = 0 ; i < nums.size() ; i++){
+        permutation.push_back(nums[i]);
+        if(qualified(cnt)){
             perm(cnt+1);
-            permutation.pop_back();
-            selected[i] = false;
         }
+        permutation.pop_back();
     }
 }
 
 void build(){
     nums = vector<int>(21);
     selected = vector<bool>(21, false);
+    op = vector<vector<char>>(n, vector<char>(n));
     int num = -10;
     for(int i = 0; i < 21 ; i++){
         nums[i] = num;
         num++;
+    }
+    for(int i = 0 ; i < n ; i++){
+        for(int j = i ; j < n ; j++){
+            cin>>op[i][j];
+        }
     }
 }
 
 
 
 int main(int argc, const char * argv[]) {
-    cnt = 0;
+    
     cin>>n;
-    //op = "-+0++++--+";
-    cin>>op;
     build();
-    //permutation = vector<int>{-2, 5, -3, 1};
-    //cout<<isAns()<<endl;
     perm(0);
-    cout<<cnt<<endl;
-    //cout<<isAns()<<endl;
+
     return 0;
 }

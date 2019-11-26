@@ -1,165 +1,71 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/14889.png)
-### Type : 브루트포스
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9465.png)
+### Type :  다이나믹 프로그래밍
 
 #### 나의 접근
-1. 팀을 나누기 위한 경우의 수를 순열을 통해 탐색 했다
+1. 탐색 방법을 생각 해보았다
 ```
- a) 1 2 3 4 5 6
- b) 1 2 3 4 6 5
- c) 1 3 4 5 4 6
- ...
-```
-2. 생성된 순열을 2개의 Vector로 분리 한다  
-```
-Team A) 1 2 3
-Team B) 4 5 6
-```
-3. 각 Vector 별로 가능한 모든 순서 쌍의 점수 합을 계산 한다
-```cpp
-int score(vector<int> members){
-    int sum = 0;
-    int pa, pb;
+ 50 10 100 20 40
+ 30 50 70  10 60
+```  
+    (1) n+1 대각선  
+        - 상, 하, 좌, 우 스티커가 동시에 뜯기므로 제거할 수 있는 대상은 n+1칸의 대각선에 위치한 스티커이다  
+    (2) n + 2 상
+        - 스티커가 뜯긴 뒤 n+2 칸의 위쪽에 위치한 스티커는 온전히 제거 할 수 있다.  
+    (3) n + 2 하
+        - 스티커가 뜯긴 뒤 n+2 칸의 아래에 위치한 스티커는 온전히 제거 할 수 있다
     
-    for(int i = 0 ; i < members.size() ; i++){
-        pa = members[i];
-        for(int j = 0 ; j < members.size() ; j++){
-            if(i==j)
-                continue;
-            pb = members[j];
-            sum += table[pa][pb];
-        }
-    }
-    return sum;
-}
-```
+2. 문제점  
+    (1) n+2칸 부터는 상, 하 모든 스티커를 온전히 제거할 수 있는데 모든 경우의 수를 탐색 해야 하는가?  
+    (2) 탐색과정에서 스티커를 뜯고 난 뒤 온전히 제거 하지 못하는 위치는 어떻게 할 것인가?  
+    (3) 팀색 과정에서 최대 값만 찾아 나가야 하는가?  
+    (4) 저장은 어떤 방식으로 해나가야 할 것인가?  
 
-4.  2개 Vector의 점수 차이를 구하고 최소 값을 갱신 한다
-```cpp
-return abs(scoreA-scoreB);
-```
-
-5. 결과 : <span style="color:red">시간초과</span>
+3. dp[0][n] = max(dp[1][n-1], dp[1][n+1]) + cost[0][n]  
+   dp[1][n] = max(dp[0][n-1], dp[0][n+1]) + cost[0][n]  
+   점화식을 세워 계산을 해보았지만 틀린값 발생 함
  
  
-#### 시간초과의 원인
-1. 동일한 조합을 2번씩 탐색 한다
-```
-ex) {1, 2, 3} - {4, 5, 6}, {4, 5, 6} - {1, 2, 3}
-```
-|a - b|, |b- a|는 순서 상관 없이 동일 하므로 2번 계산할 필요가 없다.
-_string 과 set을 이용하여 중복을 피하는 시도를 해보았지만 시간 초과는 여전했다_
+#### 모범답안 접근 및 풀이
 
-2. Team 멤버들의 가능한 모든 쌍을 검사할 때   inner loop을 0부터 시작 하지 않아도 된다
-```cpp
-//많은 계산 횟수 
-for(int i = 0 ; i < members.size() ; i++){
-    for(int j = 0 ; j < members.size() ; j++){
-        if(i==j)
-            continue;
-        sum += table[pa][pb];
-    }
-}
-//적은 계산 횟수  [a][b] + [b][a]
-for(int i = 0 ; i < members.size() ; i++){
-    for(int j = ㅑ+1 ; j < members.size() ; j++){
-        if(i==j)
-            continue;
-        sum += table[pa][pb] + table[pb][pa];
-    }
-}
+1. 필요한 탐색  
+    (1) n+1, n+2 대각선  
+        - 온전히 뜯을 수 있는 위치의 스티커는 n+1 혹은 n+2칸의 대각선에 위치한 스티커 이다  
+          ex) 50 -> 50 , 50 -> 70  
+    
+2. 불필요한 탐색  
+    (1) 동일한 row에 위치한 n+2칸의 스티커는 대각선을 거쳐 탐색하는 것보다 클 수 없다  
+       ex) (50 + 100) < (50 + 50 + 100)  
+    (2) n+3 대각선에 위치한 스티커는 3보다 작은칸의 대각선을 거쳐 탐색하는 값 보다 클 수 없다  
+       ex) (50+10) < 50 + 50 + 100 + 10)  
 
-```
+3. 점화식 도출  
+    필수적인 탐색만 사용하여 배열의 값을 채워 나간다.  
+    ```cpp
+    dp[0][n] = max(dp[1][n-1], dp[1][n-2]) + cost[0][n]
+    dp[1][n] = max(dp[0][n-1], dp[0][n-2]) + cost[1][n]
+    ```
+
+4. 초기화  
+   (1) dp 배열 탐색이 cost부터 시작되도록 초기화 한다. 
+   ```cpp
+    dp[0][1] = cost[0][1];
+    dp[1][1] = cost[1][1];
+   ```
+   (2) Index Error를 방지 하고 순차적인 탐색이 가능하도록 0번째 칸을 0으로 초기화 한다.  
+   ```cpp
+    dp[0][0] = dp[1][0] = 0;
+   ```    
   
-#### 답안 및 주요 코드
-1. n의 절반 크기로 조합을 만든다. 조합은 중복이 발생하지 않는다.
+#### 주요 코드
 ```cpp
-void dfs(int here, int cnt){
-    if(cnt == n/2){
-    ...
-    }
-    return;
+for(int i = 2 ; i <= n ; i++){
+    dp[0][i] = max(dp[1][i-1], dp[1][i-2]) + cost[0][i];
+    dp[1][i] = max(dp[0][i-1], dp[0][i-2]) + cost[1][i];
 }
 ```
-2. 조합 생성후 선택된 인자와 그렇지 않은 인자들을 Start와 Link팀으로 나눈다
-  ```cpp
-for(int i = 0 ; i < n ; i++){  
-     if(selected[i])
-         start.push_back(i);
-     else
-         link.push_back(i);
-}
-  ```
-3. start 팀과 link 팀의 능력치를 모두 합산 한다
-  ```cpp
-for(int i = 0 ; i<start.size() ; i++){
-    int sy, sx, ly, lx;
-    for(int j = i+1 ; j<start.size() ; j++){
-        sy = start[i]; sx = start[j]; //start member
-        ly = link[i]; lx = link[j];   //link member
-      
-        //add stat of member
-        scoreA += table[sy][sx] + table[sx][sy];
-        scoreB += table[ly][lx] + table[lx][ly];
-    }
 
-}
-  ```
- 4. 점수 차이중 가장 작은 값을 구한다  
- 
- 
- #### Code
- ```cpp
-int compare(){
-     //seperate team
-     vector<int> start, link;
-     int scoreA, scoreB;
-     
-     scoreA = scoreB = 0;
-     
-     for(int i = 0 ; i < n ; i++){
-         if(selected[i])
-             start.push_back(i);
-         else
-             link.push_back(i);
-     }
-     for(int i = 0 ; i<start.size() ; i++){
-         int sy, sx, ly, lx;
-         for(int j = i+1 ; j<start.size() ; j++){
-             sy = start[i]; sx = start[j]; 
-             ly = link[i]; lx = link[j];
-             
-             scoreA += table[sy][sx] + table[sx][sy];
-             scoreB += table[ly][lx] + table[lx][ly];
-         }
-     }
-
-     return abs(scoreA-scoreB);
-}
-
-
-void dfs(int here, int cnt){
-     if(cnt == n/2){
-         int diff = compare();
-         ret = min(ret, diff);
-         return;
-     }
-     
-     for(int i = here; i< n ;i++){
-         if(!selected[i]){
-             selected[i]=true;
-             
-             dfs(i, cnt+1);
-             selected[i]=false;
-             
-         }
-     }
-}
-
-```
-
-
-### 전략 BUILD
-1. 가능한 멤버 경우의 수를 조합 탐색 과정을 통해 만들어 낼 수 있었다
-2. 선택된 인자와 그렇지 않은 인자를 구분할 수 있는 좋은 문제였다
-3. 적절히 무엇을 나누어~ 의 뉘앙스의 문제가 나오면 조합과 이분을 생각해보자.
+### 깨달은 점
+1. 탐색할 경우가 n에 비례하여 많아질 경우에는 필요한 탐색 경로와 의미없는 탐색 경로를 규정 해야 한다.
+2. 생각한 탐색 경로를 그려놓고 어떤것이 의미 있고 어떤것이 의미 없는지 생각하면 힌트를 얻을 수 있다.
+3. 0을 초기 값으로 두어 순차적인 탐색을 가능 하도록 만들 수 있다.
 
