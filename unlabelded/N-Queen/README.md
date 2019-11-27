@@ -1,4 +1,4 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9465.png)
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9663.png)
 ### Type :  백 트랙킹
 
 #### Queen 이란?
