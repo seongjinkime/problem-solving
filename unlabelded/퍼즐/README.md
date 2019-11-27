@@ -35,95 +35,101 @@ if(isRange(y, nx) && table[y][nx] != 0){
 #### 결과 : **틀렸습니다** (21% 통과)    
 원인  
 - 인접 조건 검사의 정확도가 부실함.  
-- 순열 생성 시간 복잡도는 n! 이다.  
-- 최악의 경우 20! (2432902008176640000)번 을 계산 해야 한다.
-- 실제로 동작할 경우 하루가 넘게 걸리는 시간이다.
+- 알고리즘의 정확한 정의와 풀이 방법이 미비함
 
 
 #### 모범답안 접근 및 풀이
 
-1. 조건을 만족할 때만 순열 생성을 이어 나간다.
-```cpp
-for(int i = 0 ; i < nums.size() ; i++){
-    permutation.push_back(nums[i]);
-    if(qualified(cnt)){ //cnt는 순열의 크기
-        perm(cnt+1);
-    }
-    permutation.pop_back();
-}
+1. 0 대신 9를 삽입 하고 목표물을 설정 한다
 ```
-**순열을 생성 하고 난 뒤 조건 검사를 하는 것과 대비 적이다.**  
-**경우의 수를 확연히 줄일 수 있다.**    
+1 9 3
+4 2 5
+7 8 6
+```
+```
+Target = 123456789
+```
 
-2. 기호 매칭  
-    (1) 기호 Table 생성  
+2. 문자열 BFS 트리 탐색을 통해 주어진 상태로 부터 목표 상태까지 도달 할 수 있는 최소 거리를 구한다.  
     ```
-     n=4
-     (0,0) (0,1) (0, 2) (0, 3)
-           (1,1) (1, 2) (1, 3)
-                 (2, 2) (2, 3)
-                        (3, 3)
-    ```  
-    - 기호를 순서대로 배치 할 수 있다.  
+    Tree Example
+                 123495786
+    193425786    913425789
+                 139425789
     ```
-    ex) (0,0) = 첫번째 기호, (0, 1) = 두번째 기호 ...  
-    ```
-
-    (2) (row, col)의 구간 합을 차례대로 구한다.  
+    (1) 위치 및 현재 상태 파악
     ```cpp
-      //idx = 순열의 크기
-      for(int row = idx ; row >= 0 ; row--)
-        sum += permutation[idx];
-    ```  
+    string current = q.front();
+    int idx = current.find('9');
+    int y = idx / len;
+    int x = idx % len;
+    ```
+    **2차원 배열을 사용하지 않고 몫과 나머지를 통해 y와 x 값을 도출 할 수 있다**
 
+    (2) 만족한 범위 내에서 요소의 순서를 바꾼 새로운 문자열(상태)을 생성 한다.
+    ```cpp
+    int ny = y + dy[i];
+    int nx = x + dx[i];
+    if(0<=ny && ny < len && 0 <= nx && nx < len){
+        string tmp = table;
+        swap(tmp[y * 3 + x], tmp[ny * 3 + nx]);
+    ```
     (3) 기호와 구간 합이 다를경우 false를 반환 한다.
+    - 만약 아직 한번도 방문한 적이 없는 상태일 경우 탐색을 진행 한다.  
+    - 탐색 순서를 현재 탐색 순서 +1 로 갱신한다.
     ```cpp
-    if(op[row][col] == '+' && sum <= 0)
-      return false;
-    if(op[row][col] == '-' && sum >= 0)
-      return false;
-    if(op[row][col] == '0' && sum != 0)
-      return false;
+    if(visited.count(tmp)==0){
+      visited[tmp] = visited[table]+1;
+      q.push(tmp);
+      cnt++;
+    }
     ```
+    **상태 방문 순서를 기록하기 위해 map<string, int> 자료 구조를 사용한다**
 
+    (4) 만약 현재 상태가 목표 상태와 동일 하다면 방문 순서를 반환 한다.
+    ```cpp
+    if(current==target){
+        return visited[table];
+    }
+    ```
 
 #### 주요 코드
 ```cpp
-bool qualified(int col){
-    int sum = 0;
-    int idx = col;
-    for(int row = col ; row >= 0 ; row--){
-        sum += permutation[idx];
-        if(op[row][col] == '+' && sum <= 0)
-            return false;
-        if(op[row][col] == '-' && sum >= 0)
-            return false;
-        if(op[row][col] == '0' && sum != 0)
-            return false;
-        idx--;
-    }
-    return true;
-}
-
-void perm(int cnt){
-    if(cnt == n){
-        for(int i = 0 ; i < permutation.size() ; i++){
-            cout<<permutation[i]<<" ";
+int bfs(string start){
+    queue<string> q;
+    map<string, int> visited;
+    visited[start] = 0;
+    q.push(start);
+    int cnt = 0;
+    while(!q.empty()){
+        string current = q.front();
+        //cout<<table<<endl;
+        int idx = current.find('9');
+        int y = idx / len;
+        int x = idx % len;
+        q.pop();
+        if(table==target){
+            return visited[table];
         }
-        exit(0);
-
-    }
-    for(int i = 0 ; i < nums.size() ; i++){
-        permutation.push_back(nums[i]);
-        if(qualified(cnt)){
-            perm(cnt+1);
+        for(int i = 0 ; i < 4 ; i++){
+            int ny = y + dy[i];
+            int nx = x + dx[i];
+            if(0<=ny && ny < len && 0 <= nx && nx < len){
+                string tmp = current;
+                swap(tmp[y * 3 + x], tmp[ny * 3 + nx]);
+                if(visited.count(tmp)==0){
+                    visited[tmp] = visited[current]+1;
+                    q.push(tmp);
+                    cnt++;
+                }
+            }
         }
-        permutation.pop_back();
     }
+    return -1;
 }
 ```
 
 ### 깨달은 점
-1. 구간 합을 (0, 0), (0, 1)... 이 아닌 (i, i), (i-1, i), (i-2, i)... 로 구할수도 있다.
-2. **기호 매칭으로 완전 탐색을 실시 할 수 있다.**  
-3. 순열 생성 이전에 조건을 검사하면 수행 시간을 확연히 줄일 수 있다. (경우의 수 감소)
+1. **문자열 상태 탐색을 통해 BFS를 실시 할 수 있다**
+2. 상태 방문을 위해 map 자료구조를 활용 할 수 있다.
+3. 2차원 배열 대신 몫과 나머지를 활용할 수 있다.
