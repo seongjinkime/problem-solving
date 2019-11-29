@@ -91,7 +91,7 @@ for(int col = 0 ; col < n ; col++){
     }
 }
 ```
-**safe 함수를 통해 다음 위치가 유망한지 여부를 검사한다.**
+**safe 함수를 통해 다음 위치가 유망한지 여부를 검사한다.**  
 **부모 노드로 갈때는 놓은 Queen을 다시 되돌려 놓는다.**
 
 ![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/back_tracking.png)
@@ -117,7 +117,7 @@ for(int col = 0 ; col < n ; col++){
  }
  return true;
  ```
- **row를 증가시키며 탐색하므로 하단부분은 탐색할 필요가 없다**
+ **row를 증가시키며 탐색하므로 하단부분은 탐색할 필요가 없다**  
  **붙필요한 탐색을 줄여 시간을 줄일 수 있다**
 
 #### 주요 코드
