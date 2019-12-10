@@ -1,5 +1,5 @@
-![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_1.jpg)
-![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_2.jpg)
+![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_1.png)
+![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_2.png)
 ### Type : BFS + DFS
 
 #### 접근

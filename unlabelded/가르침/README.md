@@ -1,4 +1,4 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1062.jpg)
+![Problem]((https://github.com/seongjinkime/problem-solving/raw/master/images/1062.png))
 ### Type : 브루트포스
 
 #### 접근

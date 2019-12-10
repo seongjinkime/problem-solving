@@ -1,71 +1,189 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9465.png)
-### Type :  다이나믹 프로그래밍
+![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_1.png)
+![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/4991_2.png)
+### Type : BFS + DFS
 
-#### 나의 접근
-1. 탐색 방법을 생각 해보았다
-```
- 50 10 100 20 40
- 30 50 70  10 60
-```  
-    (1) n+1 대각선  
-        - 상, 하, 좌, 우 스티커가 동시에 뜯기므로 제거할 수 있는 대상은 n+1칸의 대각선에 위치한 스티커이다  
-    (2) n + 2 상
-        - 스티커가 뜯긴 뒤 n+2 칸의 위쪽에 위치한 스티커는 온전히 제거 할 수 있다.  
-    (3) n + 2 하
-        - 스티커가 뜯긴 뒤 n+2 칸의 아래에 위치한 스티커는 온전히 제거 할 수 있다
-    
-2. 문제점  
-    (1) n+2칸 부터는 상, 하 모든 스티커를 온전히 제거할 수 있는데 모든 경우의 수를 탐색 해야 하는가?  
-    (2) 탐색과정에서 스티커를 뜯고 난 뒤 온전히 제거 하지 못하는 위치는 어떻게 할 것인가?  
-    (3) 팀색 과정에서 최대 값만 찾아 나가야 하는가?  
-    (4) 저장은 어떤 방식으로 해나가야 할 것인가?  
+#### 접근
+1.  BFS를 통해 로봇, 각 쓰레기 간의 거리를 구한다.
+(1) 로봇 -> 쓰레기 1, 쓰레기 2, 쓰레기 3  
+(2) 쓰레기 1 -> 로봇, 쓰레기 2, 쓰레기 3  
+(3) 쓰레기 2 -> 로봇, 쓰레기 1, 쓰레기 3   
+(4) 쓰레기 3 -> 로봇, 쓰레기 1, 쓰레기 2   
+<br>
 
-3. dp[0][n] = max(dp[1][n-1], dp[1][n+1]) + cost[0][n]  
-   dp[1][n] = max(dp[0][n-1], dp[0][n+1]) + cost[0][n]  
-   점화식을 세워 계산을 해보았지만 틀린값 발생 함
- 
- 
-#### 모범답안 접근 및 풀이
+2. 각 지점간의 거리를 MST Table로 생성한다.  
 
-1. 필요한 탐색  
-    (1) n+1, n+2 대각선  
-        - 온전히 뜯을 수 있는 위치의 스티커는 n+1 혹은 n+2칸의 대각선에 위치한 스티커 이다  
-          ex) 50 -> 50 , 50 -> 70  
-    
-2. 불필요한 탐색  
-    (1) 동일한 row에 위치한 n+2칸의 스티커는 대각선을 거쳐 탐색하는 것보다 클 수 없다  
-       ex) (50 + 100) < (50 + 50 + 100)  
-    (2) n+3 대각선에 위치한 스티커는 3보다 작은칸의 대각선을 거쳐 탐색하는 값 보다 클 수 없다  
-       ex) (50+10) < 50 + 50 + 100 + 10)  
+    |        | R | T1  | T2  | T3  |   
+    |:---:   |:---:  |:---:|:---:|:---:|
+    | R      | 0 |  |   |   |
+    |  T1    |   | 0 |   |   |
+    |  T2    |   |   | 0 |   |
+    |  T3    |   |   |   | 0 |
 
-3. 점화식 도출  
-    필수적인 탐색만 사용하여 배열의 값을 채워 나간다.  
-    ```cpp
-    dp[0][n] = max(dp[1][n-1], dp[1][n-2]) + cost[0][n]
-    dp[1][n] = max(dp[0][n-1], dp[0][n-2]) + cost[1][n]
-    ```
+<br>
 
-4. 초기화  
-   (1) dp 배열 탐색이 cost부터 시작되도록 초기화 한다. 
-   ```cpp
-    dp[0][1] = cost[0][1];
-    dp[1][1] = cost[1][1];
-   ```
-   (2) Index Error를 방지 하고 순차적인 탐색이 가능하도록 0번째 칸을 0으로 초기화 한다.  
-   ```cpp
-    dp[0][0] = dp[1][0] = 0;
-   ```    
-  
-#### 주요 코드
+3. Robot에서 출발하여 어떤 순서로 가야 최소한의 거리로 모든 쓰레기를 치울 수 있는지 구한다  
+  - DFS 순열 생성을 통해 각기 다른 순서를 만들어 낸다
+  - MST Table의 거리를 순서에 따라 합산한다.  
+  - 합산한 것들 중 최소한의 값을 구한다.  
+
+
+
+#### 주요 포인트  
+  - **무조건 가까운 지점만 찾는다고 최적의 거라기 구해지진 않는다**
+  ex)  * R * * : 왼쪽~오른쪽으로 탐색 해야 함
+  - **각 구간의 거리를 2차원 배열로 저장할 수 있다**
+    (1) bfs를 통해 시작점을 기준으로 각 종착지간의 거리가 담긴 Path 배열을 받는다
+    (2) dist[i][j] = path[y][x] 를 통해 MST 배열을 생성한다
+  - **순열 조합을 통해 각기 다른 탐색 순서를 만들 수 있다**
+  - *주의: 반드시 Robot부터 시작해야 하므로 순열 생성 구간은 1부터 시작 한다*
+
+#### 구현 코드
+
 ```cpp
-for(int i = 2 ; i <= n ; i++){
-    dp[0][i] = max(dp[1][i-1], dp[1][i-2]) + cost[0][i];
-    dp[1][i] = max(dp[0][i-1], dp[0][i-2]) + cost[1][i];
+
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <string.h>
+#include <queue>
+#define INF 987654321
+#define MAX 21
+#define CLEAN '.'
+#define DIRTY '*'
+#define FURNITURE 'x'
+#define ROBOT 'o'
+
+using namespace std;
+typedef vector<vector<int>> table;
+typedef pair<int, int> pos;
+
+vector<pos>tasks;
+bool selected[11];
+table dist;
+int dy[4] {-1, 1, 0, 0};
+int dx[4] {0, 0, -1, 1};
+int ret;
+char map [MAX][MAX];
+
+int w, h;
+
+bool inRange(int y, int x){
+    return 0<=y && y < h && 0<=x && x<w;
 }
+
+//start를 기준으로 한 거리를 반환하기 위한 BFS 함수
+table bfs(int y, int x){
+    int sy, sx, ny, nx;
+    table visited = table(h, vector<int>(w, -1));
+    queue<pos> q;
+    q.push(pos(y, x));
+    visited[y][x] = 0;
+    while (!q.empty()) {
+        pos here = q.front();
+        sy = here.first;
+        sx = here.second;
+        q.pop();
+        for(int i = 0 ; i < 4 ; i++){
+            ny = sy + dy[i];
+            nx = sx + dx[i];
+            if(!inRange(ny, nx))
+                continue;
+            if(visited[ny][nx]!=-1)
+                continue;
+            if(map[ny][nx] == FURNITURE)
+                continue;
+
+            visited[ny][nx] = visited[sy][sx] + 1;
+            q.push(pos(ny, nx));
+        }
+    }
+    return visited;
+}
+
+//청소 순서를 위한 순열 생성 함수
+void dfs(int here, int cnt, int sum){
+    if(cnt == tasks.size()-1){
+        //cout<<cnt<<" "<<sum<<endl;
+        ret = min(ret, sum);
+        return;
+    }
+    //주의 : 로봇부터 시작해야 하므로 1부터 시작
+    for(int there = 1 ; there < tasks.size() ; there++){
+        if(!selected[there]){
+            selected[there] = true;
+            //주의 : 기존 값을 변경하지 않기위해 새로운 변수 사용
+            int next = sum + dist[here][there];
+            dfs(there, cnt+1, next);
+            selected[there] = false;
+        }
+    }
+}
+
+void build(){
+    char ch;
+    tasks.clear();
+    memset(selected, false, sizeof(selected));
+    //robot일경우 배열의 맨 앞에 위치 추가
+    //쓰레기일 경우 배열의 맨 뒤에 위치 추가
+    for(int y = 0 ; y < h ; y++){
+        for(int x = 0; x < w ; x++){
+            cin>>ch;
+            if(ch == ROBOT){
+                tasks.insert(tasks.begin(), pos(y, x));
+            }else if (ch == DIRTY){
+                tasks.push_back(pos(y, x));
+            }
+            map[y][x] = ch;
+
+        }
+    }
+
+}
+
+void solve(){
+    build();
+    ret = INF;
+    int sy, sx, dy, dx;
+    table path;
+    //MST를 위한 배열 선언
+    dist = table(tasks.size(), vector<int>(tasks.size(), 0));
+    //task 순화
+    for(int i = 0 ; i < tasks.size() ; i++){
+        sy = tasks[i].first;
+        sx = tasks[i].second;
+        //각기 다른 시작점을 기준으로 한 거리 받음
+        path = bfs(sy, sx);
+        for(int j = 0 ; j < tasks.size() ; j++){
+            dy = tasks[j].first;
+            dx = tasks[j].second;
+            //MST 배열에 값 할당
+            //i = 출발지, j = 도착지
+            dist[i][j] = path[dy][dx];
+            if(dist[i][j] == -1){
+                cout<<-1<<endl;
+                return;
+            }
+        }
+    }
+    //순열 생성 및 최소값 갱신
+    dfs(0, 0, 0);
+    //정답 출력
+    cout<<ret<<endl;
+}
+
+
+int main(int argc, const char * argv[]) {
+    while(true){
+        cin>>w>>h;
+        if(w==0 && h ==0){
+            break;
+        }
+        solve();
+    }
+    return 0;
+}
+
 ```
 
 ### 깨달은 점
-1. 탐색할 경우가 n에 비례하여 많아질 경우에는 필요한 탐색 경로와 의미없는 탐색 경로를 규정 해야 한다.
-2. 생각한 탐색 경로를 그려놓고 어떤것이 의미 있고 어떤것이 의미 없는지 생각하면 힌트를 얻을 수 있다.
-3. 0을 초기 값으로 두어 순차적인 탐색을 가능 하도록 만들 수 있다.
-
+1. 반드시 가장 가까운 위치를 찾아간다고 해서 최적의 값을 보장해주지는 않는다
