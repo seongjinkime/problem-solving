@@ -10,111 +10,111 @@
 #include <queue>
 #include <map>
 #include <vector>
+#define MAX 11
 
-#define UP 0
-#define DOWN 1
-#define RIGHT 2
-#define LEFT 3
-
-#define WALL '#'
-#define EMPTY '.'
-#define DST 'O'
-
-#define MAX_LEN 11
 using namespace std;
 
-typedef pair<int, int>pos;
+typedef pair<int, int> pos;
 typedef vector<pos> balls;
-map<balls, int> path;
-char table[MAX_LEN][MAX_LEN];
 int dy[4] {-1, 1, 0, 0};
-int dx[4] {0, 0, 1, -1};
-int w, h;
+int dx[4] { 0, 0,-1, 1};
+char table[MAX][MAX];
+map<balls, int> dist;
+pos hole;
 
-int moveBall(pos& ball, int d){
-    int cnt = 0;
-    char ch = table[ball.first][ball.second];
-    while(ch != WALL && ch != DST){
-        ball.first = ball.first + dy[d];
-        ball.second = ball.second + dx[d];
-        cnt++;
-    }
-    return cnt;
+
+bool vistied(balls b){
+    return dist.count(b) > 0;
 }
 
-void bfs(balls start){
-    pos red, blue;
-    int rMove, bMove;
-    queue<balls>q;
-    path[start] = 0;
-    balls newBalls;
+void moveBall(pos& ball, int& move, int y, int x){
+    while(table[ball.first + y][ball.second + x] != '#'){ //!
+        if(table[ball.first][ball.second] == 'O')
+            break;
+        ball.first += y;
+        ball.second += x;
+        move++;
+    }
+}
+
+int bfs(balls b){
+    queue<balls> q;
+    q.push(b);
+    dist[b] = 0;
     
-    while (!q.empty()) {
+    while(!q.empty()){
         balls current = q.front();
-        red = current[0];
-        blue = current[1];
-        int dist = path[current];
+        q.pop();
         
-        if(dist>10){
-            cout<<"-1"<<endl;
-            return;
-        }
+        if(dist[current]>=10)
+            return -1;
+
+        for(int i = 0 ; i < 4 ; i++){
+            //0 == Red, 1 == Blue
+            pos nr = current[0];
+            pos nb = current[1];
+            int rDist = 0 ;
+            int bDist = 0;
             
-        for(int d = 0 ; d < 4 ; d++){
-            rMove = moveBall(red, d);
-            bMove = moveBall(blue, d);
-            if(table[blue.first][blue.second] == DST)
+            moveBall(nr, rDist, dy[i], dx[i]);
+            moveBall(nb, bDist, dy[i], dx[i]);
+            
+            //if fail
+            if(nb == hole)
                 continue;
-            if(table[blue.first][blue.second] == DST){
-                cout<<dist+1<<endl;
-                return;
-            }
+            //if ok
+            if(nr == hole)
+                return dist[current]+1;
             
-            if(red.first==blue.first && red.second == blue.second){
-                if(rMove<bMove){
-                    red.first -= dy[d];
-                    red.second -= dx[d];
+            if(nr == nb){
+                if(rDist<bDist){
+                    nb.first -= dy[i];
+                    nb.second -= dx[i];
                 }else{
-                    blue.first -= dy[d];
-                    blue.second -= dx[d];
+                    nr.first -= dy[i];
+                    nr.second -= dx[i];
                 }
             }
+  
+            balls nset = balls{nr, nb};//!
+            if(vistied(nset)) continue;
             
-            newBalls = {red, blue};
-            if(path.count(newBalls)==0){
-                path[newBalls] = dist+1;
-                q.push(newBalls);
-            }
-                
-            
+            dist[nset] = dist[current]+1;//!
+            q.push(nset);
         }
     }
-    
+    return -1;
 }
 
-balls build(){
+balls build(int w, int h){
+    balls ret = vector<pos>(2);
     char ch;
-    pos red, blue;
+    
     for(int y = 0 ; y < h ; y++){
         for(int x = 0 ; x < w ; x++){
             cin>>ch;
             if(ch == 'R'){
-                red = pos(y, x);
-                ch = EMPTY;
+                ret[0] = pos(y, x);
             }else if(ch == 'B'){
-                blue = pos(y, x);
-                ch = EMPTY;
+                ret[1] = pos(y, x);
+            }else if(ch == 'O'){
+                hole = pos(y, x);
             }
             table[y][x] = ch;
         }
     }
-    return {red, blue};
+    return ret;
 }
 
-int main(int argc, const char * argv[]) {
-    cin>>h>>w;
-    balls start = build();
-    bfs(start);
 
+
+int main(void){
+    
+    int w, h;
+    cin>>h>>w;
+    balls b = build(w, h);
+    int mdist = bfs(b);
+    cout<<mdist<<endl;
+    
     return 0;
 }
