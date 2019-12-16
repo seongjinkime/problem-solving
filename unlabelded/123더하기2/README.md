@@ -1,6 +1,6 @@
 ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/12101.png)
 [문제 바로가기](https://www.acmicpc.net/problem/12101)
-### Type : 다이나믹 프로그래밍, 탐샛
+### Type : 다이나믹 프로그래밍, 탐색
 
 #### 접근
 1. 1,2,3 더하기 1에서 약간의 응용이 들어간 문제다.  
