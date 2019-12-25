@@ -1,4 +1,5 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9663.png)
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9663.png)
+[문제 바로가기](https://www.acmicpc.net/problem/9663)
 ### Type :  백 트랙킹
 
 #### Queen 이란?
@@ -96,6 +97,8 @@ for(int col = 0 ; col < n ; col++){
 
 ![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/back_tracking.png)
 
+
+
 3. Safe 함수
   - 주어진 위치를 기준으로 상, 좌상, 우상의 위치를 탐색한다.  
   - 탐색 과정중 Queen이 발견되면 false를 반환 한다.
@@ -119,40 +122,67 @@ for(int col = 0 ; col < n ; col++){
  ```
  **row를 증가시키며 탐색하므로 하단부분은 탐색할 필요가 없다**  
  **붙필요한 탐색을 줄여 시간을 줄일 수 있다**
+ 
+ #### 플로우차트
+ 
+ ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9663_isPossible.png)
+ ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9663_drop.png)
 
 #### 주요 코드
 ```cpp
-bool safe(int y, int x){
-    //row--
-    for(int row = y ; row >= 0 ; row--){
-        if(table[row][x] == 1)
+#include <iostream>
+#include <vector>
+#define MAX 15
+
+using namespace std;
+
+int board[MAX][MAX];
+int n, num;
+
+
+bool possible(int y, int x){
+    for(int ny = y, nx = x; ny>=0&&nx>=0 ; ny--, nx--){
+        if(board[ny][nx] == 1)
             return false;
     }
-    //row--col--
-    for(int row = y, col = x ; row >= 0 && col >= 0; row--, col--){
-        if(table[row][col] == 1)
+    
+    for(int ny = y, nx = x; ny>=0&&nx<n ; ny--, nx++){
+        if(board[ny][nx] == 1)
             return false;
     }
-    //row--col++
-    for(int row = y, col = x ; row >= 0 && col < n; row--, col++){
-        if(table[row][col] == 1)
+    
+    for(int ny = y, nx = x; ny>=0&&nx>=0 ; ny--){
+        if(board[ny][nx] == 1)
             return false;
     }
     return true;
 }
 
-void addQueen(int row){
-    if(row==n){
-        cnt++;
+
+void drop(int y){
+    if(y == n){
+        num+=1;
         return;
     }
-    for(int col = 0 ; col < n ; col++){
-        if(safe(row, col)){
-            table[row][col] = 1;
-            addQueen(row+1);
-            table[row][col] = 0;
+    
+    for(int x = 0; x < n ; x++){
+        if(possible(y, x)){
+            board[y][x] = 1;
+            drop(y+1);
+            board[y][x] = 0;
         }
     }
+}
+
+
+int main(int argc, const char * argv[]) {
+    num = 0;
+    cin>>n;
+    //board[0][0] = 1;
+    drop(0);
+    cout<<num<<endl;
+    
+    return 0;
 }
 
 ```
