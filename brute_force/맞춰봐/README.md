@@ -25,7 +25,7 @@
 
 #### 플로우 차트  
 1. 모든 구간 합의 기호를 검사하는 퇴각 검사 qualified  
-![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1248_qualified.png)
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1248_qualified.png?raw=true)
 
 2. 조건을 만족하는 순열을 탐색하는 find 함수
 ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1248_find.png)
