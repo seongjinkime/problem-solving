@@ -94,8 +94,8 @@ for(int col = 0 ; col < n ; col++){
 ```
 **safe 함수를 통해 다음 위치가 유망한지 여부를 검사한다.**  
 **부모 노드로 갈때는 놓은 Queen을 다시 되돌려 놓는다.**
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/back_tracking.png)
 
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/back_tracking.png)
 
 
 
@@ -122,9 +122,9 @@ for(int col = 0 ; col < n ; col++){
  ```
  **row를 증가시키며 탐색하므로 하단부분은 탐색할 필요가 없다**  
  **붙필요한 탐색을 줄여 시간을 줄일 수 있다**
- 
+
  #### 플로우차트
- 
+
  ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9663_isPossible.png)
  ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9663_drop.png)
 
@@ -145,12 +145,12 @@ bool possible(int y, int x){
         if(board[ny][nx] == 1)
             return false;
     }
-    
+
     for(int ny = y, nx = x; ny>=0&&nx<n ; ny--, nx++){
         if(board[ny][nx] == 1)
             return false;
     }
-    
+
     for(int ny = y, nx = x; ny>=0&&nx>=0 ; ny--){
         if(board[ny][nx] == 1)
             return false;
@@ -164,7 +164,7 @@ void drop(int y){
         num+=1;
         return;
     }
-    
+
     for(int x = 0; x < n ; x++){
         if(possible(y, x)){
             board[y][x] = 1;
@@ -181,12 +181,13 @@ int main(int argc, const char * argv[]) {
     //board[0][0] = 1;
     drop(0);
     cout<<num<<endl;
-    
+
     return 0;
 }
 
 ```
 
 ### 깨달은 점
-1. 일반적인 브루트포스에 탐색 조건을 추가하여 시간초과를 예방할 수 있다.
-2. 방향탐색 외에도 for 문을 활용하여 탐색할 수 있다.  
+1. 같은 내용이라고 함수 호출을 하지 않는 것이 빠르다
+2. 동일한 내용의 변수를 계속 선언하고 초기화 하는데 시간이 소요됨 (전역 변수 사용)  
+3. 상수 값을 사용 하는 것이 메모리내의 값 참조 보다 훨씬 빠름

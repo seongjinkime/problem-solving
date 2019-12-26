@@ -1,59 +1,65 @@
 //
 //  main.cpp
-//  6604_카잉달력
+//  6064_카잉달력(retry)
 //
-//  Created by Kim Seong Jin on 06/11/2019.
-//  Copyright © 2019 Kim's Inc. All rights reserved.
+//  Created by Kim Seong Jin on 2019. 12. 24..
+//  Copyright © 2019년 Kim Seong Jin. All rights reserved.
 //
 
 #include <iostream>
-#include <algorithm>
 
 using namespace std;
 
-
-
-int gcd(int m, int n){
-    int a = max(m,n);
-    int b = min(m,n);
-    while(b!=0){
-        int r = a%b;
-        a = b;
-        b = r;
+int gcd(int a, int b){
+    int numA = max(a, b);
+    int numB = min(a, b);
+    while (numB != 0) {
+        int rem = numA % numB;
+        numA = numB;
+        numB = rem;
     }
-    return a;
-}
-int lcm(int m, int n){
-    return m*n/gcd(m,n);
+    return numA;
 }
 
-void solution(){
-    int m,n,x,y;
+int lcm(int a, int b){
+    return a*b / gcd(a, b);
+}
+
+int solve(int m, int n, int x, int y){
+    int year, day, limit;
+    limit = lcm(m, n);
+    year = x%m;
     
-    cin>>m>>n>>x>>y;
+    if(year == 0){
+        year = m;
+    }
     
-    int maxYear = lcm(m,n);
     while(true){
-        if(x>maxYear || (x)%n == y)
+        day = year % n;
+        if(day == 0)
+            day = n;
+        
+        if(day == y)
+            return year;
+        
+        if(year > limit)
             break;
-        x+=m;
-    }
+        
+        year += m;
     
-    if(x>maxYear){
-        cout<<-1<<endl;
-    }else{
-        cout<<x<<endl;
     }
+    return -1;
+    
 }
-
 int main(int argc, const char * argv[]) {
+    int m, n, x, y;
     int t;
     cin>>t;
+    
     for(int i = 0 ; i < t ; i++){
-        solution();
+        cin>>m>>n>>x>>y;
+        cout<<solve(m,n,x,y)<<endl;
     }
-    //solution();
-    //cout<<gcd(20, 10);
-    //cout<<lcm(12, 10);
+    
     return 0;
 }

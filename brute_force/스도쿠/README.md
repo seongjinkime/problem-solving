@@ -1,6 +1,6 @@
 ![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/2580.png)
 [문제 바로가기](https://www.acmicpc.net/problem/2580)
-### Type : 브루트포 + 백트랙킹
+### Type : 브루트포스 + 백트랙킹
 
 #### 접근
 1. 빈 칸을 채워 나갈때 존건에 부합하는지 검사 한다 (퇴각 검사)
