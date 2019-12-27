@@ -57,9 +57,9 @@
 
 #### 4. 플로우차트  
 (1) bfs 탐색
-![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_bfs.png)
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_bfs.png?raw=true)
 (2) move ball
-![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_move.png)
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_move.png?raw=true)
 
 #### 5. 코드 구현  
 
