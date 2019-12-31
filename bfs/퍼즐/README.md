@@ -1,5 +1,4 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1525_1.png)
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1525_2.png)
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1525.png)
 [문제 바로가기](https://www.acmicpc.net/problem/1525)
 ### Type :  BFS
 
@@ -42,7 +41,7 @@
         return dist[cs];
     ```
 #### 플로우 차트
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1525_bfs.png)
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1525_bfs.png)
 
 #### 구현 코드
 ```cpp

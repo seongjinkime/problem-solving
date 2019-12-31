@@ -21,84 +21,80 @@
 
 ```cpp
 
+
 #include <iostream>
-#include <vector>
 #include <queue>
-#include <string.h>
-#include <string>
-#include <map>
-#define FAIL "BARK"
-#define MAX 20001
+#include <vector>
+#include <algorithm>
+#include <set>
 
 using namespace std;
-//자료 구조 선언
-map<int, char> numByRemain;
-bool visited[MAX];
-int parents[MAX];
-int n;
 
-//탐색 진행
-void bfs(){
-    queue<int> q;
-    q.push(1);
-    parents[1] = -1;
-    visited[1] = true;
-    numByRemain[1] = '1';
+typedef vector<int> buckets;
+buckets size;
+vector<int>waters;
+
+void moveWater(buckets& w, int src, int dst){
+    if(w[src] > (size[dst] - w[dst])){
+        w[src] -=(size[dst] - w[dst]);
+        w[dst] = size[dst];
+    }else{
+        w[dst] += w[src];
+        w[src] = 0;
+    }
+}
+
+void bfs(buckets start){
+    buckets nb;
+    queue<buckets> q;
+    q.push(start);
+    set<buckets> visited;
+    visited.insert(start);
+
     while(!q.empty()){
-        int current = q.front();
+        buckets current = q.front();
         q.pop();
-        int newNums[2];
-        //후보 생성
-        newNums[0] = (current*10) % n;
-        newNums[1] = (current*10+1) % n;
-        for(int i = 0 ; i < 2 ; i++){
-            int newNum = newNums[i];
-            if(visited[newNum])
-                continue;
-            //나머지를 위해 덧붙인 수 라벨링
-            numByRemain[newNum] = i + '0';
-            //부모 정보 저장
-            parents[newNum] = current;
 
-            if(newNum==0)
-                return;
+        if(current[0] == 0)
+            waters.push_back(current[2]);
 
-
-            visited[newNum] = true;
-            q.push(newNum);
+        for(int i = 0 ; i < 3 ; i++){
+            for(int j = 0 ; j < 3 ; j++){
+                if(i==j)
+                    continue;
+                nb = current;
+                moveWater(nb, i, j);
+                if(visited.count(nb)>0)
+                    continue;
+                visited.insert(nb);
+                q.push(nb);
+            }
         }
-
     }
 }
-//출력을 위한 깊이우선 탐색
-void print(int num){
-    if(num == -1){
-        return;
+
+void build(buckets& start){
+    start = buckets(3, 0);
+    size = buckets(3);
+    for(int i = 0 ; i < 3 ; i++){
+        cin>>size[i];
     }
-    print(parents[num]);
-    cout<<numByRemain[num];
+    start[2] = size[2];
 }
 
+int main(int argc, const char * argv[]) {
+    buckets start;
+    build(start);
 
-int main(void){
-    int t;
-    cin>>t;
-    for(int i = 0 ; i < t ; i++){
-        cin>>n;
-        memset(visited, false, sizeof(visited));
-        bfs();
-        print(0);
-        cout<<endl;
-    }
+    bfs(start);
+    sort(waters.begin(), waters.end());
+    for(int w : waters)
+        cout<<w<<" ";
+    cout<<endl;
+    //cout<<waters.size()<<endl;
 
     return 0;
 }
 
-```
 
-### 깨달은 점
-1. 나머지에 수를 더함으로써 몫을 계산 할 수 있다 (오버 플로우 방지)
-2. 알고리즘 문제에 long long으로 연산이 불가능한 경우가 출제 된다.
-3. 탐색 목적을 명확히 해야 한다.  
-  - 이번 문제는 나머지가 0이 될때까지의 최소 수를 탐색
-  - 한번 방문한 나머지는 다시 방문하지 않아도 됨
+```
