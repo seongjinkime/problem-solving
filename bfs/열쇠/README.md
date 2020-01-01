@@ -1,10 +1,28 @@
-//
-//  main.cpp
-//  9328_열쇠
-//
-//  Created by Kim Seong Jin on 05/12/2019.
-//  Copyright © 2019 Kim Seong Jin. All rights reserved.
-//
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9328.png)
+[문제 바로가기](https://www.acmicpc.net/problem/9328)
+### Type : BFS
+
+#### 접근
+(1) 외부에서 접근 가능 하도록 지도 주의를 빈곳으로 둘러싼다.
+(2) 한번의 BFS 당 열쇠를 한개 이상 찾거나 혹은 문서를 발견하는 일을 시도 한다.
+(3) 만약 시도에 성공 했다면 다시 한번 BFS를 시도 한다.
+(4) 만약 시도에 실패 했다면 BFS 를 종료 하고 다수의 시도에서 찾은 문서의 갯수를 출력 한다.
+(5) BFS 탐색  
+  * (1) 범위를 벗어나거나, 이미 방문 했거나, 벽이라면 탐색을 하지 않는다.
+  * (2) 만약 탐색 지점에 문서가 있다면 카운트 하고, 성공한 시도로 정의한다.
+  * (3) 만약 대문자 알파벳을 만났으나, 열쇠가 없다면 탐색을 하지 않는다.
+  * (4) 만약 소문자 알파벳을 만났다면, 열쇠를 추가 하고 성공한 시도로 정의한다.
+
+#### 플로우 차트
+(1) BFS 탐색
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9328_BFS.png)
+
+
+#### 구현 코드
+
+
+
+```cpp
 
 #include <iostream>
 #include <vector>
@@ -38,19 +56,19 @@ bool bfs(){
     queue<pos> q;
     q.push(start);
     visted[0][0] = true;
-    
+
     while(!q.empty()){
         pos here = q.front();
         q.pop();
         sy = here.first;
         sx = here.second;
-        
+
         for(int i = 0 ; i < 4 ; i++){
             ny = sy + dy[i];
             nx = sx + dx[i];
             if(!inRange(ny, nx) || visted[ny][nx] || table[ny][nx] == WALL)
                 continue;
-            
+
             ch = table[ny][nx];
             if(ch == DOCU){
                 cnt++;
@@ -62,11 +80,11 @@ bool bfs(){
                     ret = true;
                 }
             }
-            
+
             table[ny][nx] = EMPTY;
             visted[ny][nx] = true;
             q.push(pos(ny, nx));
-            
+
         }
     }
     return ret;
@@ -74,7 +92,7 @@ bool bfs(){
 
 void solve(){
     bool success = true;
-    
+
     while (success) {
         success = bfs();
         //cout<<success<<endl;
@@ -90,7 +108,7 @@ void build(){
     w+=2;
     cnt = 0;
     table = vector<vector<char>>(h, vector<char>(w));
-    
+
     for(int y = 1; y < h-1 ; y++){
         for(int x = 1 ; x < w-1 ; x++){
             cin>>table[y][x];
@@ -102,7 +120,7 @@ void build(){
     for(int x = 0 ; x < w ; x++){
         table[0][x] = table[h-1][x] = EMPTY;
     }
-    
+
     cin>>kstr;
     if(kstr == "0")
         return;
@@ -119,7 +137,9 @@ int main(int argc, const char * argv[]) {
         build();
         solve();
     }
-    
+
 
     return 0;
 }
+
+```
