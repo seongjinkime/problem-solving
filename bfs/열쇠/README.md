@@ -1,4 +1,4 @@
-![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9328.png)
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9328.png?raw=true)
 [문제 바로가기](https://www.acmicpc.net/problem/9328)
 ### Type : BFS
 
@@ -15,7 +15,7 @@
 
 #### 플로우 차트
 (1) BFS 탐색
-![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/9328_BFS.png)
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9328_bfs.png?raw=true)
 
 
 #### 구현 코드
