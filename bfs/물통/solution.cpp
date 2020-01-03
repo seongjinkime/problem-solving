@@ -7,65 +7,75 @@
 //
 
 #include <iostream>
-#include <vector>
 #include <queue>
-#include <set>
+#include <vector>
 #include <algorithm>
-using namespace std;
-int size[3];
-vector<int> ret;
+#include <set>
 
-void move(int a, int b, vector<int>& water){
-    if(water[a] + water[b] > size[b]){
-        water[a] = water[a] - (size[b] - water[b]);
-        water[b] = size[b];
+using namespace std;
+
+typedef vector<int> buckets;
+buckets size;
+vector<int>waters;
+
+void moveWater(buckets& w, int src, int dst){
+    if(w[src] > (size[dst] - w[dst])){
+        w[src] -=(size[dst] - w[dst]);
+        w[dst] = size[dst];
     }else{
-        water[b] = water[a] + water[b];
-        water[a] = 0;
+        w[dst] += w[src];
+        w[src] = 0;
     }
 }
 
-void bfs(vector<int> start){
-    set<vector<int>> s;
-    queue<vector<int>>q;
-    
+void bfs(buckets start){
+    buckets nb;
+    queue<buckets> q;
     q.push(start);
-    s.insert(start);
+    set<buckets> visited;
+    visited.insert(start);
+    
     while(!q.empty()){
-        vector<int> current = q.front();
+        buckets current = q.front();
         q.pop();
-        if(current[0] == 0){
-            ret.push_back(current[2]);
-        }
+        
+        if(current[0] == 0)
+            waters.push_back(current[2]);
+        
         for(int i = 0 ; i < 3 ; i++){
             for(int j = 0 ; j < 3 ; j++){
                 if(i==j)
                     continue;
-                vector<int> tmp = current;
-                move(i, j, tmp);
-                if(s.count(tmp)==0){
-                    q.push(tmp);
-                    s.insert(tmp);
-                }
+                nb = current;
+                moveWater(nb, i, j);
+                if(visited.count(nb)>0)
+                    continue;
+                visited.insert(nb);
+                q.push(nb);
             }
         }
-
     }
-    
+}
+
+void build(buckets& start){
+    start = buckets(3, 0);
+    size = buckets(3);
+    for(int i = 0 ; i < 3 ; i++){
+        cin>>size[i];
+    }
+    start[2] = size[2];
 }
 
 int main(int argc, const char * argv[]) {
+    buckets start;
+    build(start);
     
-    for(int i = 0 ; i < 3; i++){
-        cin>>size[i];
-    }
-
-    vector<int> start {0, 0, size[2]};
     bfs(start);
-    sort(ret.begin(), ret.end());
-    for(int w : ret){
+    sort(waters.begin(), waters.end());
+    for(int w : waters)
         cout<<w<<" ";
-    }
     cout<<endl;
+    //cout<<waters.size()<<endl;
+    
     return 0;
 }

@@ -1,4 +1,4 @@
-![Problem](https://github.com/seongjinkime/problem-solving/raw/master/images/9095.png)
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/9095.png?raw=trueg)
 [문제 바로가기](https://www.acmicpc.net/problem/9095)
 ### Type : Dynamic Programming
 

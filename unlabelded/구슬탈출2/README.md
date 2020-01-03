@@ -12,8 +12,8 @@
 
 #### 2. 접근
 1. 자료구조
-    (1) 위치(y,x)를 저장할 pair<int, int> pos
-    (2) 공 두개의 위치를 저장할 vector < pos > balls
+    (1) 위치(y,x)를 저장할 pair<int, int> ball
+    (2) 공 두개의 위치를 저장할 vector < ball > balls
     (3) 공의 탐색 위치와 거리를 저장할 map<balls, int> dist
     -> 많은 풀이에서 4차원 배열을 사용했지만 나는 좀더 직관적인 자료구조로 map을 사용 하였다  
     -> map에 각 공의 탐색 위치(상태)와 도달하기 위한 거리를 저장 할 수 있다.
@@ -55,8 +55,13 @@
 **(2) 한 지점에서 모든 방향으로 공을 굴려보면서 성공 여부가 가려질때 까지 탐색 한다**
 **(3) 기존의 공을 굴리는 것이 아니라 새로운 변수로 공을 만들고 굴린다**
 
+#### 4. 플로우차트  
+(1) bfs 탐색
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_bfs.png?raw=true)
+(2) move ball
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/13460_move.png?raw=true)
 
-#### 4. 코드 구현  
+#### 5. 코드 구현  
 
 ```cpp
 #include <iostream>

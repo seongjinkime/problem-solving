@@ -1,129 +1,114 @@
-![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1248.png)
-### Type :  백트랙킹
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1248.png)
+[문제 바로가기](https://www.acmicpc.net/problem/1248)
+### Type : 브루트 포스 + 백트랙킹
 
-#### 나의 접근
-1.문제를 보고 부분 합의 구간을 표현 해보았다.
-```
- n=4
- (0,0) (0,1) (0, 2) (0, 3)
-       (1,1) (1, 2) (1, 3)
-             (2, 2) (2, 3)
-                    (3, 3)
-```  
+#### 접근
+1. 행렬 생성
+  * 규현이는 비행기에서 구간합을 2차원 행렬로 표현하였다  
+  * 각 행과 열에는 구간합의 기호를 표시 하였다 (+, 0, -)
+  * ex) -2, 5, -3, 1
 
-2. -10 ~ 10 의 숫자로 이루어진 순열을 생성한다.   
-```
-n=4
-ex 1) -10 -9 -8 -7
-ex 2) -10 -9 -8 -6
-...
-```    
-3.  순열의 부분합을 (0, 0) ~ (n, n) 까지 구하면서 기호에 만족하는지 검사 한다.  
+      |i\j|1|2|3|4|
+      |------|---|---|---|---|
+      |1|-|+|0|+|
+      |2| |+|+|+|
+      |3| | |-|-|
+      |4| | | |+|
+
+2. 퇴각 검사  
+  * 순열의 n 번째 숫자를 지정할 때, n 번째 숫자가 모든 구간합의 기호를 만족하는지 검사 한다  
+  * 즉 위의 도표에서 j 번째 숫자가 들어 왔을 때 모든 i ~ j 구간합 기호가 일치 하는지 검사 한다.
+  * ex) j = 4 : check(4, 4), check(3, 4), check(2, 4), check(1, 4)
+
+3. 브루트 포스
+  * 퇴각 검사를 모두 통과하여 n 번째의 순열을 만들 수 있을때 모든 순열의 숫자를 출력한 후 return 한다.  
+
+#### 플로우 차트  
+1. 모든 구간 합의 기호를 검사하는 퇴각 검사 qualified  
+![Problem](https://github.com/seongjinkime/problem-solving/blob/master/images/1248_qualified.png?raw=true)
+
+2. 조건을 만족하는 순열을 탐색하는 find 함수
+![Problem](https://raw.githubusercontent.com/seongjinkime/problem-solving/master/images/1248_find.png)
+
+#### 구현 코드
+
+
+
 ```cpp
-idx = 0;
-for(int i = 0 ; i < n ; i++){
-    int sum = permutation[i];
-    for(int j = i+1 ; j < n ; j++){
-        sum += permutation[j]; // i ~ j 까지의 부분합
-        if(!pass(idx, sum)){    // 기호 만족 검사
-            return false;
-        }
-        idx++;
-    }
-}
-```    
-#### 결과 : 시간 초과    
-원인  
-- 순차적인 "순열 생성" 단계에서 시간 초과가 일어난다.  
-- 순열 생성 시간 복잡도는 n! 이다.  
-- 최악의 경우 20! (2432902008176640000)번 을 계산 해야 한다.
-- 실제로 동작할 경우 하루가 넘게 걸리는 시간이다.
 
+#include <iostream>
+#include <vector>
+#include <string>
 
-#### 모범답안 접근 및 풀이
+using namespace std;
 
-1. 조건을 만족할 때만 순열 생성을 이어 나간다.
-```cpp
-for(int i = 0 ; i < nums.size() ; i++){
-    permutation.push_back(nums[i]);
-    if(qualified(cnt)){ //cnt는 순열의 크기
-        perm(cnt+1);
-    }
-    permutation.pop_back();
-}
-```
-**순열을 생성 하고 난 뒤 조건 검사를 하는 것과 대비 적이다.**  
-**경우의 수를 확연히 줄일 수 있다.**    
+int n;
+vector<int>nums;
+vector<int>perm;
+string input;
+vector<vector<char>> table;
 
-2. 기호 매칭  
-    (1) 기호 Table 생성  
-    ```
-     n=4
-     (0,0) (0,1) (0, 2) (0, 3)
-           (1,1) (1, 2) (1, 3)
-                 (2, 2) (2, 3)
-                        (3, 3)
-    ```  
-    - 기호를 순서대로 배치 할 수 있다.  
-    ```
-    ex) (0,0) = 첫번째 기호, (0, 1) = 두번째 기호 ...  
-    ```
-
-    (2) (row, col)의 구간 합을 차례대로 구한다.  
-    ```cpp
-      //idx = 순열의 크기
-      for(int row = idx ; row >= 0 ; row--)
-        sum += permutation[idx];
-    ```  
-
-    (3) 기호와 구간 합이 다를경우 false를 반환 한다.
-    ```cpp
-    if(op[row][col] == '+' && sum <= 0)
-      return false;
-    if(op[row][col] == '-' && sum >= 0)
-      return false;
-    if(op[row][col] == '0' && sum != 0)
-      return false;
-    ```
-
-
-#### 주요 코드
-```cpp
-bool qualified(int col){
+bool qualified(int j){
     int sum = 0;
-    int idx = col;
-    for(int row = col ; row >= 0 ; row--){
-        sum += permutation[idx];
-        if(op[row][col] == '+' && sum <= 0)
+    for(int i = idx ; i >= 0 ; i--){
+        sum += perm[i];
+        if(table[i][j] == '+' && sum <= 0)
             return false;
-        if(op[row][col] == '-' && sum >= 0)
+        else if(table[i][j] == '-' && sum>=0)
             return false;
-        if(op[row][col] == '0' && sum != 0)
+        else if(table[i][j] == '0' && sum !=0)
             return false;
-        idx--;
     }
     return true;
 }
 
-void perm(int cnt){
+void find(int cnt){
     if(cnt == n){
-        for(int i = 0 ; i < permutation.size() ; i++){
-            cout<<permutation[i]<<" ";
+        for(int i = 0 ; i < n ; i++){
+            cout<<perm[i]<<" ";
         }
         exit(0);
+    }
+
+    for(int i = 0 ; i < 21 ; i++){
+        perm.push_back(nums[i]);
+        if(qualified(cnt)){
+            find(cnt+1);
+        }
+        perm.pop_back();
 
     }
-    for(int i = 0 ; i < nums.size() ; i++){
-        permutation.push_back(nums[i]);
-        if(qualified(cnt)){
-            perm(cnt+1);
-        }
-        permutation.pop_back();
-    }
 }
+
+void build(){
+    cin>>input;
+    int idx = 0;
+    table = vector<vector<char>>(n, vector<char>(n));
+    //string 입력후 기호 행렬 생성
+    for(int i = 0 ; i < n ; i++){
+        for(int j = i ; j < n ; j++){
+            table[i][j] = input[idx++];
+        }
+    }
+    for(int i = -10; i<=10 ; i++){
+        nums.push_back(i);
+    }
+
+}
+
+
+int main(int argc, const char * argv[]) {
+    cin.tie(NULL);
+    ios::sync_with_stdio(false);
+    cin>>n;
+    build();
+    find(0);
+    return 0;
+}
+
+
 ```
 
 ### 깨달은 점
-1. 구간 합을 (0, 0), (0, 1)... 이 아닌 (i, i), (i-1, i), (i-2, i)... 로 구할수도 있다.
-2. **기호 매칭으로 완전 탐색을 실시 할 수 있다.**  
-3. 순열 생성 이전에 조건을 검사하면 수행 시간을 확연히 줄일 수 있다. (경우의 수 감소)
+1. 구간합을 2차원 행렬로 표현할 수 있다
+2. i - j 구간을 j 가 아닌 i를 변경하면서 검사 할 수 있다  
